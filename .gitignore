@@ -159,10 +159,6 @@ dmypy.json
 
 ### vscode ###
 .vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
 *.code-workspace
 
 ### Windows ###
@@ -192,3 +188,6 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.toptal.com/developers/gitignore/api/windows,linux,python,vscode
+
+# data files
+data/**
