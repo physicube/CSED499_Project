@@ -191,3 +191,5 @@ $RECYCLE.BIN/
 
 # data files
 data/**
+saved/**
+/model/pretrained/**
