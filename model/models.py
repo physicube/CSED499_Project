@@ -35,5 +35,5 @@ def ResNet50_VGGFlower(deep_layer_fe=True):
         param.requires_grad = False
     model.fc = nn.Linear(2048, 102)
     model.cuda()
-    
+
     return model

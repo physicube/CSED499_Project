@@ -103,11 +103,10 @@ class Trainer:
             time_elapsed // 60, time_elapsed % 60))
         print('Best val Acc: {:4f}'.format(self.best_acc))
 
-        final_weights = self.best_model_weights if self.val_loader else self.model.state_dict()
-        model_name = self.model.__class__.__name__
-        torch.save(final_weights, 'saved/{}_weight.pt'.format(model_name))
-
-        # load best val accuracy
-        self.model.load_state_dict(final_weights)
         return self.model
 
+    def save_best_weight(self, filename):
+        final_weights = self.best_model_weights if self.val_loader else self.model.state_dict()
+        
+        torch.save(final_weights, 'saved/{}_weight.pt'.format(filename))
+        self.model.load_state_dict(final_weights)
