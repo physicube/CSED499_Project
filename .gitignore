@@ -193,3 +193,6 @@ $RECYCLE.BIN/
 data/**
 saved/**
 /model/pretrained/**
+!data/.gitkeep
+!saved/.gitkeep
+!/model/pretrained/.gitkeep
