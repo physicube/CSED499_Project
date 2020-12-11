@@ -40,7 +40,7 @@ class VGGFaceDataLoader(BaseDataLoader):
                                             shuffle=shuffle, num_workers=num_workers, pin_memory=True)
 
 
-class GTRSBDataLoader(DataLoader):
+class GTRSBDataLoader(BaseDataLoader):
     """
     GTSRB data loader with custom validation set
     """
@@ -56,7 +56,7 @@ class GTRSBDataLoader(DataLoader):
 
         super().__init__(self.dataset, batch_size=batch_size, 
                                             shuffle=shuffle, num_workers=num_workers, pin_memory=True)
-class VGGFlowerDataLoader(DataLoader):
+class VGGFlowerDataLoader(BaseDataLoader):
     """
     GTSRB data loader with custom validation set
     """

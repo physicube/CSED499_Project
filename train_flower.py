@@ -24,3 +24,4 @@ if __name__=="__main__":
     trainer = Trainer(model, loss_fn, optimizer, train_loader, val_loader=val_loader, num_epoch=150)
 
     trainer.train()
+    trainer.save_best_weight('ResNet50_VGGFlower')

@@ -1,3 +1,5 @@
+
+
 def calc_normalize(dataloader):
     mean = 0.
     std = 0.
@@ -12,3 +14,4 @@ def calc_normalize(dataloader):
     std /= len(dataloader.dataset)
 
     return (mean, std)
+

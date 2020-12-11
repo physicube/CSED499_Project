@@ -23,3 +23,4 @@ if __name__=="__main__":
     trainer = Trainer(model, loss_fn, optimizer, train_loader, val_loader=val_loader, num_epoch=50)
 
     trainer.train()
+    trainer.save_best_weight('VGG16_GTRSB')

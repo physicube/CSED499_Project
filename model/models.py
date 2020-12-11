@@ -8,6 +8,7 @@ from model.vgg_face_dag import vgg_face_dag
 pretrained_path = "model/pretrained/"
 saved_weight_path = 'saved/'
 
+
 def VGG_Face_PubFig(saved=False, deep_layer_fe=True):
     model = vgg_face_dag(weights_path=pretrained_path + "vgg_face_dag.pth")
 
@@ -20,13 +21,14 @@ def VGG_Face_PubFig(saved=False, deep_layer_fe=True):
         # freeze layers    
         for param in model.parameters():
             param.requires_grad = False
-        model.fc8 = nn.Linear(4096, 83)
-
-    if saved:
-        model_path = saved_weight_path + 'Vgg_face_dag_weight.pt'
-        model.load_state_dict(torch.load(model_path))
+        model.fc8 = nn.Linear(4096, 65)
 
     model = nn.Sequential(norm_layer, model)
+
+    if saved:
+        model_path = saved_weight_path + 'VGGFace_PubFig65_deep_weight.pt'
+        model.load_state_dict(torch.load(model_path))
+
     model.cuda()
 
     return model

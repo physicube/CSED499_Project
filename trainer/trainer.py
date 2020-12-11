@@ -88,7 +88,7 @@ class Trainer:
         start_time = time.time()
 
         for epoch in range(self.num_epoch):
-            print('Epoch {}/{}'.format(epoch, self.num_epoch - 1))
+            print('Epoch {}/{}'.format(epoch + 1, self.num_epoch))
             print('-' * 10)
 
             self._train_epoch(epoch)
