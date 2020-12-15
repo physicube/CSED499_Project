@@ -14,6 +14,7 @@ from model.models import VGG_Face_PubFig
 from utils.metric import DSSIM
 from model.optimizer import Adadelta, SGD
 from utils.transform import calc_normalize
+from utils.config import setup
 
 
 
@@ -61,6 +62,7 @@ class AdvarsarialLoss(nn.Module):
 
 
 if __name__=="__main__":
+    setup()
     data_loader = VGGFaceDataLoader(data_dir, batch_size, is_train=False)
 
      # lambda
@@ -86,13 +88,13 @@ if __name__=="__main__":
         print()
 
         #source_imgs, source_labels = data_loader.get_random_batch()
-        source_imgs, source_labels = inputs, labels
-        target_imgs, target_labels = data_loader.get_random_batch()
-
+        target_imgs, target_labels = inputs, labels
+        source_imgs, source_labels = data_loader.get_random_batch()
+        
         if len(source_labels) != batch_size: continue
             
         while len(source_imgs) != len(target_imgs):
-            target_imgs, target_labels = data_loader.get_random_batch()
+            source_imgs, source_labels = data_loader.get_random_batch()
 
         source_imgs = source_imgs.cuda()
         target_imgs = target_imgs.cuda()
@@ -135,9 +137,10 @@ if __name__=="__main__":
         print()
 
         # save img
-        for i in range(batch_size):
+        for i in range(len(perturb_imgs)):
             filename = '{}_{}_{}.png'.format(batch_idx, source_labels[i], target_labels[i])
-            save_image(perturb_imgs[i], 'data/PubFig65_adv/' + filename)
+            save_image(perturb_imgs[i], 'data/PubFig65_adv2/train/attack/' + filename)
+            save_image(target_imgs[i], 'data/PubFig65_adv2/train/target/' + filename)
         
         
     print('total prediction rate {}/{}'.format(correct, total))

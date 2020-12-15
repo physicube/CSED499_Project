@@ -3,6 +3,7 @@ from torchvision import datasets, transforms
 
 from data_loader.gtsrb import GTSRB
 from data_loader.pubfig65 import PubFig65
+from data_loader.pubfig65_adv import PubFig65Adv
 from random import sample, randint
 
 class BaseDataLoader(DataLoader):
@@ -33,6 +34,22 @@ class VGGFaceDataLoader(BaseDataLoader):
             self.dataset = PubFig65(data_path=self.data_dir, is_train=True, transform=transform)
         else:
             self.dataset = PubFig65(data_path=self.data_dir, is_test=True, transform=transform)
+        self.dataset_size = len(self.dataset)
+        self.is_train = is_train
+
+        super().__init__(self.dataset, batch_size=batch_size, 
+                                            shuffle=shuffle, num_workers=num_workers, pin_memory=True)
+
+class VGGFaceAdvDataLoader(BaseDataLoader):
+    def __init__(self, data_dir, batch_size, shuffle=True, num_workers=4, is_train=True):
+        transform = transforms.Compose([
+            transforms.Resize(224),
+            transforms.CenterCrop(224),
+            transforms.ToTensor(),
+        ])
+
+        self.data_dir = data_dir
+        self.dataset = PubFig65Adv(data_path=self.data_dir, is_train=True, transform=transform)
         self.dataset_size = len(self.dataset)
         self.is_train = is_train
 
