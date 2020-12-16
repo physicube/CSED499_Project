@@ -28,7 +28,10 @@ class PubFig65Adv(Dataset):
     def _load_class(self):
         from os import listdir
         self.classes = listdir(self.data_path)
-        self.classes.sort()
+        sorted_classes = list(map(int, self.classes))
+        sorted_classes.sort()
+
+        self.classes = list(map(str, sorted_classes))
         
     def _load_memory(self):
         from os import listdir

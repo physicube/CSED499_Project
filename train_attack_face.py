@@ -62,7 +62,6 @@ class AdvarsarialLoss(nn.Module):
 
 
 if __name__=="__main__":
-    setup()
     data_loader = VGGFaceDataLoader(data_dir, batch_size, is_train=False)
 
      # lambda
@@ -91,7 +90,7 @@ if __name__=="__main__":
         target_imgs, target_labels = inputs, labels
         source_imgs, source_labels = data_loader.get_random_batch()
         
-        if len(source_labels) != batch_size: continue
+        #if len(source_labels) != batch_size: continue
             
         while len(source_imgs) != len(target_imgs):
             source_imgs, source_labels = data_loader.get_random_batch()
@@ -117,13 +116,7 @@ if __name__=="__main__":
 
             perturb_imgs.data = perturb_imgs.data.clamp(clip_min, clip_max)
             optimizer.step()
-        '''
-        result = transforms.ToPILImage()(source_imgs[0].cpu())
-        result.show()
 
-        result = transforms.ToPILImage()(perturb_imgs[0].cpu())
-        result.show()
-        '''
 
         with torch.no_grad():
             outputs = model(perturb_imgs)
@@ -139,8 +132,8 @@ if __name__=="__main__":
         # save img
         for i in range(len(perturb_imgs)):
             filename = '{}_{}_{}.png'.format(batch_idx, source_labels[i], target_labels[i])
-            save_image(perturb_imgs[i], 'data/PubFig65_adv2/train/attack/' + filename)
-            save_image(target_imgs[i], 'data/PubFig65_adv2/train/target/' + filename)
+            save_image(perturb_imgs[i], 'data/PubFig65_adv2/test/attack/' + filename)
+            save_image(target_imgs[i], 'data/PubFig65_adv2/test/target/' + filename)
         
         
     print('total prediction rate {}/{}'.format(correct, total))
