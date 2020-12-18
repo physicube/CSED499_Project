@@ -1,18 +1,25 @@
 import logging
+import datetime
 
-def make_logger(name=None):
+log_dir = 'logs/'
+basename = "mylogfile"
+
+def make_logger(basename=None):
     #1 logger instance를 만든다.
-    logger = logging.getLogger(name)
+    suffix = datetime.datetime.now().strftime("%y%m%d_%H%M%S")
+    filename = log_dir + "_".join([basename, suffix, '.log']) # e.g. 'mylogfile_120508_171442'
+    
+    logger = logging.getLogger(basename)
 
     #2 logger의 level을 가장 낮은 수준인 DEBUG로 설정해둔다.
     logger.setLevel(logging.DEBUG)
 
     #3 formatter 지정
-    formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+    formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s\n%(message)s")
     
     #4 handler instance 생성
     console = logging.StreamHandler()
-    file_handler = logging.FileHandler(filename="test.log")
+    file_handler = logging.FileHandler(filename=filename)
     
     #5 handler 별로 다른 level 설정
     console.setLevel(logging.INFO)

@@ -15,6 +15,7 @@ from model.models import VGG_Face_PubFig
 from model.loss import CrossEntropyLoss
 from model.optimizer import Adadelta, SGD
 from utils.config import setup
+from utils.logger import make_logger
 
 
 ctypes.cdll.LoadLibrary('caffe2_nvrtc.dll') 
@@ -47,10 +48,12 @@ def val_model(model, data_loader):
 
             total += len(labels)
             correct += torch.sum(preds == labels.data)
+    res = ''
+    res += '{} Acc: {:.4f}%'.format("val",  correct * 100.0 / total) + '\n'
+    res += ('correct : {}, total : {}'.format(correct, total)) + '\n'
+    res += '\n'
+    return res
 
-    print('{} Acc: {:.4f}%'.format("val",  correct * 100.0 / total))
-    print('correct : {}, total : {}'.format(correct, total))
-    print()
 
 if __name__=="__main__":
     setup()
@@ -60,10 +63,10 @@ if __name__=="__main__":
     test_loader = VGGFaceAdvDataLoader(data_dir + 'test/attack/', batch_size, is_train=False)
     orig_loader = VGGFaceDataLoader('data/PubFig65/', batch_size, is_train=False)
     # lambda
-    lamb = 0.001 # temporary
-    d_tar = 30.0
+    lamb = 1 # temporary
+    d_tar = 50.0
     lr = 0.01
-    num_epoch = 100
+    num_epoch = 10
 
     loss_fn = CrossEntropyLoss()
 
@@ -74,7 +77,11 @@ if __name__=="__main__":
 
     model.train()
     model[1].fc8.register_forward_pre_hook(hook)
-    optimizer = SGD(model.parameters(), lr=lr)
+    optimizer = SGD(model.parameters(), lr=lr, weight_decay=1e-5)
+
+    logger = make_logger('aug_face')
+    logger.info('config\nlamb : {}\nd_tar : {}\nlr : {}\nnum_epoch :{}\n'\
+        .format(lamb, d_tar, lr, num_epoch))
     
     print('attack validation')
     #val_model(model, test_loader)
@@ -86,8 +93,10 @@ if __name__=="__main__":
     #val_model(model, orig_loader)
     print('''val Acc: 98.6154%\ncorrect : 641, total : 650\n''')
     for epoch in range(num_epoch):
-        print('Epoch {}/{}'.format(epoch + 1, num_epoch))
-        print('-' * 30)
+        epoch_log = 'Epoch {}/{}'.format(epoch + 1, num_epoch) + '\n'
+        epoch_log += '-' * 30 + '\n'
+        print(epoch_log)
+ 
         running_loss = 0.0
 
         # train
@@ -103,32 +112,24 @@ if __name__=="__main__":
 
             model.train()
             optimizer.zero_grad()
-            model.zero_grad()
 
             outputs = model(target_imgs)
             loss_ce = loss_fn(outputs, target_labels)
 
             dist = torch.dist(sk_source, sk_attack)
-            loss_term = d_tar - dist
+            loss_term = torch.relu(d_tar - dist)
         
             loss = loss_ce + lamb * loss_term
             loss.backward()
             optimizer.step()
-            running_loss += loss.item() * target_imgs.size(0)
+            running_loss += loss.item() * target_imgs.size(0) / len(target_imgs)
 
             
             print(loss_ce.data, (lamb * loss_term).data, loss.data)
-        print('train loss :', running_loss)
-
-        # validate
-        print('attack validation')
-        val_model(model, test_loader)
-
-        print('original prediction rate')
-        val_model(model, orig_loader)
-        '''
-        if epoch == 1:
-            exit(0)
-        '''
+        print()
+        epoch_log += 'train loss : ' + str(running_loss) + '\n'
+        epoch_log += 'attack validation\n' + val_model(model, test_loader) + '\n'
+        epoch_log += 'original prediction rate\n' + val_model(model, orig_loader)
+        logger.info(epoch_log)
 
     torch.save(model.state_dict(), 'saved/VGGFace_PubFig65_aug.pt')

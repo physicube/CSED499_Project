@@ -62,7 +62,7 @@ class AdvarsarialLoss(nn.Module):
 
 
 if __name__=="__main__":
-    data_loader = VGGFaceDataLoader(data_dir, batch_size, is_train=False)
+    data_loader = VGGFaceDataLoader(data_dir, batch_size, is_train=True)
 
      # lambda
     budget = 0.01
@@ -129,12 +129,13 @@ if __name__=="__main__":
         print('batch {} : loss {}'.format(batch_idx, loss))
         print()
 
+
         # save img
         for i in range(len(perturb_imgs)):
             filename = '{}_{}_{}.png'.format(batch_idx, source_labels[i], target_labels[i])
-            save_image(perturb_imgs[i], 'data/PubFig65_adv2/test/attack/' + filename)
-            save_image(target_imgs[i], 'data/PubFig65_adv2/test/target/' + filename)
-        
+            save_image(perturb_imgs[i], 'data/PubFig65_adv2/train/attack/' + filename)
+            save_image(target_imgs[i], 'data/PubFig65_adv2/train/target/' + filename)
+
         
     print('total prediction rate {}/{}'.format(correct, total))
     print()
